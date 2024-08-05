@@ -1,7 +1,9 @@
 # 사용 방법
 
 ```
+chmod -x init.sh init-letsencrypt.sh
 
+./init.sh
 ```
 
 <details>
