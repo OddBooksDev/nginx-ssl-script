@@ -50,7 +50,7 @@ for port in "${ports[@]}"; do
 done
 
 # Construct the complete upstream block
-upstream_block="    upstream app {\n$upstream_config    }\n"
+upstream_block="    upstream ${app_name} {\n$upstream_config    }\n"
 
 # Create a temporary file to store the updated content
 temp_file=$(mktemp)
