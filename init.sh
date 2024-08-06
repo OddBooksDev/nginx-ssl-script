@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 사용자로부터 도메인과 이메일 입력 받기
+# Prompt the user to enter domain names and email
 echo "Enter your domain names separated by space (e.g., example.com www.example.com):"
 read -a domains
 
@@ -13,10 +13,10 @@ read app_name
 echo "Enter the port numbers separated by space (e.g., 3000 3001 3002):"
 read -a ports
 
-# 도메인 배열을 공백으로 구분된 문자열로 변환
+# Convert domain array to a space-separated string
 domain_string=$(IFS=' ' ; echo "${domains[*]}")
 
-# 운영 체제에 따른 sed 명령어 설정
+# Determine the operating system and set sed command accordingly
 OS=$(uname -s)
 case "$OS" in
     Darwin)
@@ -31,34 +31,34 @@ case "$OS" in
         ;;
 esac
 
-# init-letsencrypt.sh 파일 수정
+# Update init-letsencrypt.sh with the provided domains and email
 "${sed_i[@]}" "s/domains=(.*)/domains=(${domain_string})/" init-letsencrypt.sh
 "${sed_i[@]}" "s/email=\".*\"/email=\"${email}\"/" init-letsencrypt.sh
 
-# app.conf 파일에서 도메인 변경
+# Update domains in app.conf file
 for domain in "${domains[@]}"; do
     "${sed_i[@]}" "s/example.org/${domain}/g" ./data/nginx/app.conf
 done
 
-# location 블록에서 proxy_pass를 업데이트
+# Update proxy_pass in location block
 "${sed_i[@]}" "s/proxy_pass http:\/\/app;/proxy_pass http:\/\/${app_name};/g" ./data/nginx/app.conf
 
 # Build the upstream configuration
 upstream_config=""
 for port in "${ports[@]}"; do
-    upstream_config+="        server localhost:$port;\n"
+    upstream_config+="        server ${app_name}:${port};\n"
 done
 
 # Construct the complete upstream block
-upstream_block="    upstream ${app_name} {\n$upstream_config    }\n"
+upstream_block="    upstream ${app_name} {\n${upstream_config}    }\n"
 
 # Create a temporary file to store the updated content
 temp_file=$(mktemp)
 
-# Update the temp.conf file using awk
+# Update the app.conf file using awk
 awk -v new_block="$upstream_block" '
     BEGIN {block=0}
-    /^[[:space:]]*upstream app[[:space:]]*{/ {print new_block; block=1; next}
+    /^[[:space:]]*upstream[[:space:]]+app[[:space:]]*{/ {print new_block; block=1; next}
     block && /^[[:space:]]*}/ {block=0; next}
     !block {print}
 ' ./data/nginx/app.conf > "$temp_file"
@@ -68,5 +68,5 @@ mv "$temp_file" ./data/nginx/app.conf
 
 echo "init-letsencrypt.sh and app.conf have been updated with your domain and email."
 
-# init-letsencrypt.sh 스크립트 실행
-# ./init-letsencrypt.sh
+# Execute the init-letsencrypt.sh script
+./init-letsencrypt.sh
