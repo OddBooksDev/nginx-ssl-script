@@ -1,3 +1,18 @@
+# 필수 사항!
+
+- 도메인과 서브 도메인이 준비되어 있어야 하며, A 레코드가 올바르게 설정되어 있어야 함
+- docker 설치 필수
+  - ubuntu 24 버전에서 도커 설치되었습니다.
+    - [Move to Docs](https://docs.docker.com/engine/install/ubuntu/)
+- docker network를 추가해야합니다. -> uponati-network
+  - command
+    - docker network create uponati-network
+- 성공적인 SSL 인증을 위해, Nginx와 Certbot을 통한 인증서 발급 시 conf 파일에 지정된 백엔드 애플리케이션 컨테이너가 반드시 실행 중이어야 함
+
+# 유의 사항
+
+- certbot을 지원해주는 버전이 정해져있기 때문에 docker compose version 3.3 이하로 해야한다는 단점이 있다. 그 이상 버전은 오류를 발생한다고 함
+
 # 사용 방법
 
 ```
@@ -5,6 +20,13 @@ chmod -x init.sh init-letsencrypt.sh
 
 ./init.sh
 ```
+
+### 입력하게 될 내용들
+
+1. 도메인 정보(A 레코드 입력)
+2. SSL에 관련된 안내 메일을 받을 이메일
+3. 애플리케이션 이름(적절한 이름으로 지정, **[Ex. oddnary]** )
+4. 애플리케이션 컨테이너를 띄운 PORTs (Ex. 3000 or 3000, 3001, 3002)
 
 <details>
 
@@ -22,7 +44,7 @@ chmod -x init.sh init-letsencrypt.sh
 Encrypt certificate for one or multiple domains in a docker-compose
 setup with nginx.
 This is useful when you need to set up nginx as a reverse proxy for an
-application.
+application..
 
 ## Installation
 
