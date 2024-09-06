@@ -15,11 +15,15 @@
 
 # 사용 방법
 
+### 1. 처음 도메인을 등록할 때 자동화 스크립트
+
 ```
 chmod +x init.sh init-letsencrypt.sh
 
 ./init.sh
 ```
+
+### 2. sub domain을 바라보는 CNAME 레코드 도메인들을 추가로 등록할 때 스크립트
 
 ### 입력하게 될 내용들
 
