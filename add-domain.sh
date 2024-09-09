@@ -52,7 +52,7 @@ echo
 
 echo "### Requesting Let's Encrypt certificate for $domain ..."
 # Join $domain to -d args
-domain_args="-d $domain -d www.$domain"
+domain_args="-d $domain"
 
 # Select appropriate email arg
 case "$email" in
@@ -78,7 +78,7 @@ docker compose exec nginx nginx -s reload
 
 # Updating nginx.conf or site-specific conf to include the new domain and server_name
 echo "Updating nginx configuration..."
-nginx_conf_path="./nginx/conf.d/$server_name.conf"
+nginx_conf_path="./data/nginx/$server_name.conf"
 cat > "$nginx_conf_path" <<EOL
 upstream $server_name {
     server $server_name:$server_port;
