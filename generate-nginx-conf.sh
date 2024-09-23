@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 read -p "Enter your domain (e.g., example.org): " domain
 read -p "Enter your server name (e.g., app.example.org): " server_name

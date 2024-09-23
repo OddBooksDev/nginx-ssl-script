@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 read -p "Enter your main domain (e.g., example.com): " domain
 read -p "Would you like to setup a wildcard SSL certificate for all subdomains? (y/N): " wildcard_decision
