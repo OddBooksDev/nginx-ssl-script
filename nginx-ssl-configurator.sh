@@ -1,7 +1,8 @@
 #!/bin/bash
 
-read -p "Enter your domain (e.g., example.org): " domain
-read -p "Enter your server name (e.g., app.example.org): " server_name
+read -p "Enter your main domain (e.g., example.com): " domain
+read -p "Would you like to setup a wildcard SSL certificate for all subdomains? (y/N): " wildcard_decision
+read -p "Enter your server name (e.g., app.example.com): " server_name
 read -p "Enter your server port (e.g., 3000): " server_port
 
 if ! [ -x "$(command -v docker compose)" ]; then
@@ -51,8 +52,11 @@ docker compose run --rm --entrypoint "\
 echo
 
 echo "### Requesting Let's Encrypt certificate for $domain ..."
-# Join $domain to -d args
+# Add wildcard domain if requested
 domain_args="-d $domain"
+if [ "$wildcard_decision" = "Y" ] || [ "$wildcard_decision" = "y" ]; then
+  domain_args="$domain_args -d *.$domain"
+fi
 
 # Select appropriate email arg
 case "$email" in
@@ -78,7 +82,8 @@ docker compose exec nginx nginx -s reload
 
 # Updating nginx.conf or site-specific conf to include the new domain and server_name
 echo "Updating nginx configuration..."
-nginx_conf_path="./data/nginx/$server_name.conf"
+mkdir -p "./conf"
+nginx_conf_path="./conf/$server_name.conf"
 cat > "$nginx_conf_path" <<EOL
 upstream $server_name {
     server $server_name:$server_port;
