@@ -1,6 +1,19 @@
 #!/bin/bash
 set -e
 
+# Define error handling function
+error_handler() {
+    local error_message="$1"
+    local last_line="$2"
+    local last_error="$3"
+    echo "ERROR: ${error_message}"
+    echo "Line: ${last_line} - Exit code: ${last_error}"
+    exit 1
+}
+
+# Trap errors
+trap 'error_handler "An error occurred." "$LINENO" "$?"' ERR
+
 read -p "Enter your main domain (e.g., example.com): " domain
 read -p "Would you like to setup a wildcard SSL certificate for all subdomains? (y/N): " wildcard_decision
 read -p "Enter your server name (e.g., app.example.com): " server_name
