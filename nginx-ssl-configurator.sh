@@ -26,15 +26,14 @@ fi
 
 # Check if the Docker network exists
 network_name="uponati-network"
-network_check=$(docker network ls | grep $network_name)
 
-if [ -z "$network_check" ]; then
-    echo "Docker network '$network_name' does not exist. Creating it..."
-    docker network create $network_name
+# Docker 네트워크가 존재하는지 확인하고, 없으면 생성
+if ! docker network ls | grep -q "${network_name}"; then
+  echo "Docker 네트워크 '${network_name}'가 존재하지 않습니다. 새 네트워크를 생성합니다."
+  docker network create ${network_name}
 else
-    echo "Docker network '$network_name' already exists."
+  echo "Docker 네트워크 '${network_name}'가 이미 존재합니다."
 fi
-
 
 rsa_key_size=4096
 data_path="./data/certbot"
