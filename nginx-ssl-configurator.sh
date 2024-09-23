@@ -11,6 +11,18 @@ if ! [ -x "$(command -v docker compose)" ]; then
   exit 1
 fi
 
+# Check if the Docker network exists
+network_name="uponati-network"
+network_check=$(docker network ls | grep $network_name)
+
+if [ -z "$network_check" ]; then
+    echo "Docker network '$network_name' does not exist. Creating it..."
+    docker network create $network_name
+else
+    echo "Docker network '$network_name' already exists."
+fi
+
+
 rsa_key_size=4096
 data_path="./data/certbot"
 email="" # Adding a valid address is strongly recommended
